@@ -224,7 +224,6 @@ function drawBoxes() {
     }
 }
 
-populateBoxes
 
 /** END GAME CODE **/
 
