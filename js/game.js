@@ -2,7 +2,7 @@
  * WCLN.ca
  * Hockey Matchup
  * @author Shaun Agostinho (shaunagostinho@gmail.com)
- * July 2019
+ * Febuary 2020 (Whoops, this shouldn't have taken so long, darn college is so busy.)
  */
 
 let FPS = 24;
@@ -14,13 +14,21 @@ let stage = new createjs.Stage("gameCanvas"); // canvas id is gameCanvas
 let background;
 let startScreen, endScreen;
 
-let cards = new Map();
+//mute
+let muted;
+let mute, unmute;
 
+//vocabulary config
 let json = {
-    vocabulary: [{word: "potato", definition: "ground thing like apple but ground"}, {
-        word: "apple",
-        definition: "like "
-    }
+    vocabulary: [
+        {
+            word: "potato",
+            definition: "ground thing like apple but ground"
+        },
+        {
+            word: "apple",
+            definition: "like a tree potato"
+        }
     ]
 };
 
@@ -43,25 +51,44 @@ function init() {
     stage.update();
 }
 
-/*
- * Displays the end game screen and score.
- */
-function endGame() {
-    //todo show win screen
-    gameStarted = false;
+function playSound(id) {
+    if (muted == false) {
+        createjs.Sound.play(id);
+    }
 }
 
-function setupManifest() {
-    manifest = [
-        {
-            src: "img/bg.png",
-            id: "background"
-        },
-        {
-            src: "img/startscreen.png",
-            id: "startscreen"
-        }
-    ];
+function toggleMute() {
+
+    if (muted == true) {
+        muted = false;
+    } else {
+        muted = true;
+    }
+
+    if (muted == true) {
+        stage.addChild(unmute);
+        stage.removeChild(mute);
+    } else {
+        stage.addChild(mute);
+        stage.removeChild(unmute);
+    }
+}
+
+function initMuteUnMute() {
+    var hitArea = new createjs.Shape();
+    hitArea.graphics.beginFill("#000").drawRect(0, 0, mute.image.width, mute.image.height);
+    mute.hitArea = unmute.hitArea = hitArea;
+
+    mute.x = unmute.x = STAGE_WIDTH - (mute.image.width * 1.5);
+    mute.y = unmute.y = STAGE_HEIGHT - (mute.image.height * 1.5);
+
+    mute.cursor = "pointer";
+    unmute.cursor = "pointer";
+
+    mute.on("click", toggleMute);
+    unmute.on("click", toggleMute);
+
+    stage.addChild(mute);
 }
 
 function startPreload() {
@@ -81,6 +108,38 @@ function handleFileProgress(event) {
     stage.update();*/
 }
 
+/**
+ * Update the stage. (Tween Ticker)
+ *
+ * @param event
+ */
+
+function update(event) {
+    stage.update(event);
+}
+
+function setupManifest() {
+    manifest = [
+        {
+            src: "img/bg.png",
+            id: "background"
+        },
+        {
+            src: "img/startscreen.png",
+            id: "startscreen"
+        },
+        {
+
+            src: "img/unmute.png",
+            id: "mute"
+        },
+        {
+            src: "img/mute.png",
+            id: "unmute"
+        }
+    ];
+}
+
 function handleFileLoad(event) {
     console.log("A file has loaded of type: " + event.item.type);
     // create bitmaps of images
@@ -89,6 +148,12 @@ function handleFileLoad(event) {
     }
     if (event.item.id == "startscreen") {
         startScreen = new createjs.Bitmap(event.result);
+    }
+    if (event.item.id.startsWith("mute")) {
+        mute = new createjs.Bitmap(event.result);
+    }
+    if (event.item.id.startsWith("unmute")) {
+        unmute = new createjs.Bitmap(event.result);
     }
 }
 
@@ -107,26 +172,64 @@ function loadComplete(event) {
 
     stage.addChild(background);
     stage.addChild(startScreen);
-
-    initGraphics();
+    startScreen.on("click", function (event) {
+        startGame(event);
+        stage.removeChild(startScreen);
+        initMuteUnMute();
+    });
 }
 
-/**
- * Load the basic stuff
- *
- */
-function initGraphics() {
+function startGame() {
     gameStarted = true;
 
+    /** Below this is actual game code. **/
+
+    drawBoxes();
 
 }
 
-/**
- * Update the stage. (Tween Ticker)
- *
- * @param event
- */
+/** START GAME CODE **/
 
-function update(event) {
-    stage.update(event);
+let vocabBoxes = [];
+let definitionBoxes = [];
+
+function drawBoxes() {
+
+    length = 300;
+    sideGap = 20;
+    height = 55;
+    verticalGap = 20;
+
+    boxCount = 6;
+
+    //vocab boxes
+    for (let i = 0; i < boxCount; i++) {
+        vocabBoxes[i] = new createjs.Shape();
+
+        vocabBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
+            sideGap, 100 + (verticalGap * i) + (i * height), length, height,
+            10, 10, 10, 10);
+        stage.addChild(vocabBoxes[i]);
+    }
+
+    //definition boxes
+    for (let i = 0; i < boxCount; i++) {
+        definitionBoxes[i] = new createjs.Shape();
+
+        definitionBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
+            STAGE_WIDTH - (length + sideGap),
+            100 + (verticalGap * i) + (i * height), length, height,
+            10, 10, 10, 10);
+        stage.addChild(definitionBoxes[i]);
+    }
+}
+
+populateBoxes
+
+/** END GAME CODE **/
+
+function endGame() {
+    gameStarted = false;
+
+    /** Below this is actual game code. **/
 }
