@@ -59,15 +59,15 @@ let json = {
         },
         {
             word: "minecraft1",
-            definition: "lego but virtual"
+            definition: "lego but virtual1"
         },
         {
             word: "cisco1",
-            definition: "large company that makes the internet run"
+            definition: "large company that makes the internet run1"
         },
         {
             word: "target1",
-            definition: "used for playing the game called darts bloop bleep blah glah glewe"
+            definition: "used for playing the game called darts bloop bleep blah glah glewe1"
         }
     ]
 };
@@ -226,6 +226,7 @@ function startGame() {
 
     shuffleLists();
     drawBoxes();
+    drawCheckBox();
 
 }
 
@@ -245,8 +246,10 @@ let boxCount = 6; // 6 fits perfectly so this will be the actual maximum
 let vocabList = [];
 let definitionsList = [];
 
+let level = 1;
+
 function shuffleLists() {
-    for (let i = 0; i < json.vocabulary.length; i++) {
+    for (let i = 1 * (level * boxCount); i < 1 * ((level + 1) * boxCount); i++) {
         vocabList.push(json.vocabulary[i].word);
         definitionsList.push(json.vocabulary[i].definition);
     }
@@ -274,9 +277,66 @@ function shuffle(array) {
     return array;
 }
 
+let checkBox;
+let checkBoxText;
+
+function drawCheckBox() {
+    checkBox = new createjs.Shape();
+    checkBox.graphics.beginFill("#FFF").drawRoundRectComplex(
+        sideGap + length, STAGE_HEIGHT - height - 5, STAGE_WIDTH - (sideGap * 2 + length * 2), height,
+        10, 10, 10, 10);
+
+    stage.addChild(checkBox);
+
+    checkBox.on("click", function (event) {
+        checkAnswers();
+    });
+
+    checkBoxText = new createjs.Text("Check", "24px Comic Sans MS", "#000");
+    checkBoxText.textBaseline = "alphabetic";
+    checkBoxText.textAlign = 'center';
+    checkBoxText.x = checkBox.graphics.command.x + (STAGE_WIDTH - (sideGap * 2 + length * 2)) / 2;
+    checkBoxText.y = checkBox.graphics.command.y + height / 2 + checkBoxText.getMeasuredHeight() / 4;
+
+    stage.addChild(checkBoxText);
+}
+
+function checkAnswers() {
+    let correct = 0;
+    if (matchedBoxes.matched.length != boxCount) {
+        console.log("You have not finished the matching, weirdo.");
+        checkBoxText.text = "Finish Matching!";
+        checkBoxText.font = "20px Comic Sans MS";
+        createjs.Tween.get(checkBoxText).to({text: "Check!", font: "24px Comic Sans MS"}, 1000);
+
+    } else {
+        for (let i = 0; i < matchedBoxes.matched.length; i++) {
+            for (let v = 0; v < json.vocabulary.length; v++) {
+                if (vocabBoxText[matchedBoxes.matched[i].vocab].text == json.vocabulary[v].word) {
+                    if (definitionsList[matchedBoxes.matched[i].definition] == json.vocabulary[v].definition) {
+                        console.log("Yay, Matched!");
+                        correct++;
+                        break;
+                    }
+                }
+            }
+        }
+
+        console.log(correct);
+        if (correct == boxCount) {
+            console.log("Correct!");
+            checkBoxText.text = "Correct!";
+            createjs.Tween.get(checkBoxText).to({text: "Correct!", font: "24px Comic Sans MS"}, 1000);
+        } else {
+            console.log("Try Again!");
+            checkBoxText.text = "Try Again!";
+            createjs.Tween.get(checkBoxText).to({text: "Check!", font: "24px Comic Sans MS"}, 1000);
+        }
+    }
+}
+
 /**
  * Draw the vocab boxes
- *
  */
 
 function drawBoxes() {
@@ -320,6 +380,7 @@ function drawBoxes() {
 
 let vocabBoxText = [];
 let definitionBoxText = [];
+let definitionBoxTextUnformatted = [];
 
 function drawBoxText() {
 
@@ -347,7 +408,6 @@ function drawBoxText() {
 
         let newDefinitionText = "";
         let splitLength = definitionsList[i].split(" ").length;
-        console.log(splitLength);
         for (let def = 0; def < splitLength; def++) {
             if (def !== parseInt(definitionsList[i].split(" ").length / 2)) {
                 newDefinitionText += definitionsList[i].split(" ")[def] + " ";
@@ -366,8 +426,6 @@ function drawBoxText() {
                 newDefinitionText != "" ? newDefinitionText :
                     definitionsList[i], textSize + "px Comic Sans MS", "#FFFFFF");
         }
-
-        console.log(newDefinitionText);
 
         definitionBoxText[i] = new createjs.Text(
             newDefinitionText != "" ? newDefinitionText :
