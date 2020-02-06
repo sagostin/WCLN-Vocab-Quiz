@@ -1,0 +1,10 @@
+- Figure out which vocab boxes were clicked
+    - If another vocab box was clicked, reset the previously clicked one and choose new one
+    - If it was a definition box, allow the definition to be chosen
+
+- Check button
+    - Check the set vocab and definition boxes (hashmap), if they're all correct, proceed to the next level or
+    show the win screen
+    - If they're not correct, show change the colors of the stroke around the boxes to either green (correct)
+    or red (incorrect), and change "Check Answers" button to "Try Again!"
+    - Only allow a person to advance to the next level if they have all of them correct

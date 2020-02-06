@@ -193,14 +193,15 @@ function startGame() {
 let vocabBoxes = [];
 let definitionBoxes = [];
 
+
+// Box Settings
+let length = 300;
+let sideGap = 20;
+let height = 55;
+let verticalGap = 20;
+let boxCount = 6;
+
 function drawBoxes() {
-
-    length = 300;
-    sideGap = 20;
-    height = 55;
-    verticalGap = 20;
-
-    boxCount = 6;
 
     //vocab boxes
     for (let i = 0; i < boxCount; i++) {
@@ -209,7 +210,12 @@ function drawBoxes() {
         vocabBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
             sideGap, 100 + (verticalGap * i) + (i * height), length, height,
             10, 10, 10, 10);
+
         stage.addChild(vocabBoxes[i]);
+
+        vocabBoxes[i].on("click", function (event) {
+            clickVocabBox(event);
+        });
     }
 
     //definition boxes
@@ -221,9 +227,150 @@ function drawBoxes() {
             100 + (verticalGap * i) + (i * height), length, height,
             10, 10, 10, 10);
         stage.addChild(definitionBoxes[i]);
+
+        definitionBoxes[i].on("click", function (event) {
+            clickDefinitionBox(event);
+        });
     }
 }
 
+let matchedBoxes = {
+    matched:
+        []
+};
+
+function checkIfAlreadyMatched(vocab, definition) {
+    if (vocab != null) {
+        for (let v = 0; v < matchedBoxes.matched.length; v++) {
+            if (matchedBoxes.matched[v].vocab === vocab) {
+                return true;
+            }
+        }
+    }
+
+    if (definition != null) {
+        for (let d = 0; d < matchedBoxes.matched.length; d++) {
+            if (matchedBoxes.matched[d].definition === definition) {
+                return true;
+            }
+        }
+    }
+}
+
+function matchBoxes(vocab, definition) {
+    if (!checkIfAlreadyMatched(vocab, null) && !checkIfAlreadyMatched(null, definition)) {
+        matchedBoxes.matched.push({vocab: vocab, definition: definition});
+
+        clickedDefinitionBox = undefined;
+        clickedVocabBox = undefined;
+
+        matchColor = "#FF0000";
+        vocabBoxes[vocab].graphics.setStrokeStyle(4);
+        vocabBoxes[vocab].graphics.beginStroke(matchColor);
+
+        vocabBoxes[vocab].graphics.beginFill("#FFF").drawRoundRectComplex(
+            sideGap, 100 + (verticalGap * vocab) + (vocab * height), length, height,
+            10, 10, 10, 10);
+
+        definitionBoxes[definition].graphics.setStrokeStyle(4);
+        definitionBoxes[definition].graphics.beginStroke(matchColor);
+
+        definitionBoxes[definition].graphics.beginFill("#FFF").drawRoundRectComplex(
+            STAGE_WIDTH - (length + sideGap),
+            100 + (verticalGap * definition) + (definition * height), length, height,
+            10, 10, 10, 10);
+    } else {
+        console.log("Oh no, an error has been spotted in the wild!")
+    }
+}
+
+let clickedVocabBox;
+
+function clickVocabBox(event) {
+    for (let i = 0; i < vocabBoxes.length; i++) {
+        if (vocabBoxes[i] == event.target) {
+
+            alreadyMatched = checkIfAlreadyMatched(i, null);
+
+            if (!alreadyMatched) {
+
+                vocabBoxes[i].graphics.setStrokeStyle(4);
+                vocabBoxes[i].graphics.beginStroke("#000");
+
+                vocabBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
+                    sideGap, 100 + (verticalGap * i) + (i * height), length, height,
+                    10, 10, 10, 10);
+            }
+
+            if (clickedVocabBox != i) {
+                if (typeof clickedVocabBox !== "undefined") {
+                    unClickVocabBox(clickedVocabBox);
+                }
+                if (!alreadyMatched) {
+                    clickedVocabBox = i;
+                }
+            }
+
+            if (typeof clickedVocabBox !== "undefined" && typeof clickedDefinitionBox !== "undefined") {
+                matchBoxes(clickedVocabBox, clickedDefinitionBox);
+            }
+        }
+    }
+}
+
+function unClickVocabBox(i) {
+    vocabBoxes[i].graphics.setStrokeStyle(0);
+    vocabBoxes[i].graphics.beginStroke("#FFF");
+
+    vocabBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
+        sideGap, 100 + (verticalGap * i) + (i * height), length, height,
+        10, 10, 10, 10);
+}
+
+let clickedDefinitionBox;
+
+function clickDefinitionBox(event) {
+    for (let i = 0; i < definitionBoxes.length; i++) {
+        if (definitionBoxes[i] == event.target) {
+
+            alreadyMatched = checkIfAlreadyMatched(null, i);
+
+            if (!alreadyMatched) {
+
+                definitionBoxes[i].graphics.setStrokeStyle(4);
+                definitionBoxes[i].graphics.beginStroke("#000");
+
+                definitionBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
+                    STAGE_WIDTH - (length + sideGap),
+                    100 + (verticalGap * i) + (i * height), length, height,
+                    10, 10, 10, 10);
+            }
+
+            if (clickedDefinitionBox != i) {
+                if (typeof clickedDefinitionBox !== "undefined") {
+                    unClickDefinitionBox(clickedDefinitionBox);
+                }
+                if (!alreadyMatched) {
+                    clickedDefinitionBox = i;
+                }
+            }
+
+            if (typeof clickedVocabBox !== "undefined" && typeof clickedDefinitionBox !== "undefined") {
+                matchBoxes(clickedVocabBox, clickedDefinitionBox);
+            }
+        }
+    }
+}
+
+function unClickDefinitionBox(i) {
+    definitionBoxes[i].graphics.setStrokeStyle(0);
+    definitionBoxes[i].graphics.beginStroke("#FFF");
+
+    definitionBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
+        STAGE_WIDTH - (length + sideGap),
+        100 + (verticalGap * i) + (i * height), length, height,
+        10, 10, 10, 10);
+}
 
 /** END GAME CODE **/
 
