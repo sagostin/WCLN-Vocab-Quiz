@@ -331,8 +331,29 @@ function checkAnswers() {
             console.log("Try Again!");
             checkBoxText.text = "Try Again!";
             createjs.Tween.get(checkBoxText).to({text: "Check!", font: "24px Comic Sans MS"}, 1000);
+
+            resetClear();
+
+            drawBoxes();
+            drawBoxText();
         }
     }
+}
+
+function resetClear() {
+    for (let line in vocabDefinitionLines) {
+        stage.removeChild(line);
+    }
+
+    for (let i = 0; i < vocabBoxText.length; i++) {
+        console.log(stage.children);
+    }
+
+    for (let definitionBox in definitionBoxes) {
+        //stage.removeChild(definitionBox);
+    }
+
+    matchedBoxes = {matched: []};
 }
 
 /**
@@ -349,6 +370,9 @@ function drawBoxes() {
     for (let i = 0; i < boxCount; i++) {
         vocabBoxes[i] = new createjs.Shape();
 
+        vocabBoxes[i].graphics.setStrokeStyle(4);
+        vocabBoxes[i].graphics.beginStroke("#FFF");
+
         vocabBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
             sideGap, 100 + (verticalGap * i) + (i * height), length, height,
             10, 10, 10, 10);
@@ -363,6 +387,9 @@ function drawBoxes() {
     //definition boxes
     for (let i = 0; i < boxCount; i++) {
         definitionBoxes[i] = new createjs.Shape();
+
+        definitionBoxes[i].graphics.setStrokeStyle(4);
+        definitionBoxes[i].graphics.beginStroke("#FFF");
 
         definitionBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
             STAGE_WIDTH - (length + sideGap),
@@ -380,13 +407,11 @@ function drawBoxes() {
 
 let vocabBoxText = [];
 let definitionBoxText = [];
-let definitionBoxTextUnformatted = [];
 
 function drawBoxText() {
 
     //vocab boxes
     for (let i = 0; i < boxCount; i++) {
-
         let textSize = 24;
         let fakeTextForSizing = new createjs.Text(vocabList[i], textSize + "px Comic Sans MS", "#FFFFFF");
         while (fakeTextForSizing.getMeasuredWidth() >= length - sideGap * 2) {
