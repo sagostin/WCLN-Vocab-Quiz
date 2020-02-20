@@ -52,11 +52,11 @@ let json = {
         {
             word: "apple1",
             definition: "like a tree potato1"
-        }/*,
+        },
         {
             word: "grape1",
             definition: "lil ting that grows on a vine1"
-        },
+        }/*,
         {
             word: "minecraft1",
             definition: "lego but virtual1"
@@ -252,17 +252,10 @@ function shuffleLists() {
     vocabList = [];
     definitionsList = [];
 
-    if (boxCount < 6) {
-        for (let i = 1 * (level * 6); i < 1 * ((level + 1) * boxCount); i++) {
+    for (let i = 1 * (level * 6); i < (boxCount != 6 ? 1 * (level * 6) + (boxCount) : 1 * ((level + 1) * boxCount)); i++) {
             vocabList.push(json.vocabulary[i].word);
             definitionsList.push(json.vocabulary[i].definition);
         }
-    } else {
-        for (let i = 1 * (level * boxCount); i < 1 * ((level + 1) * boxCount); i++) {
-            vocabList.push(json.vocabulary[i].word);
-            definitionsList.push(json.vocabulary[i].definition);
-        }
-    }
 
     vocabList = shuffle(vocabList);
     definitionsList = shuffle(definitionsList);
