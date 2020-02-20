@@ -179,7 +179,7 @@ function setupManifest() {
         },
         {
             src: "img/win.png",
-            id: "win"
+            id: "winScreen"
         },
         {
             src: "sound/click.mp3",
@@ -215,7 +215,7 @@ function handleFileLoad(event) {
     if (event.item.id.startsWith("unmute")) {
         unmute = new createjs.Bitmap(event.result);
     }
-    if (event.item.id.startsWith("win")) {
+    if (event.item.id.startsWith("winScreen")) {
         winScreen = new createjs.Bitmap(event.result);
     }
 }
@@ -249,6 +249,7 @@ function startGame() {
 
     /** Below this is actual game code. **/
 
+    boxCount = 6;
     shuffleLists();
     drawBoxes();
     drawCheckBox();
@@ -385,19 +386,18 @@ function checkAnswers() {
 
             } else if (json.vocabulary.length - (1 * (level * boxCount) + 6) == 0) {
                 console.log("No more levels, winner winner chicken dinner");
-                playSound("winSound");
                 stage.addChild(winScreen);
+                playSound("winSound");
                 winScreen.on("click", function (event) {
                     stage.removeChild(winScreen);
 
                     level = 0;
-                    boxCount = 6;
+                    //boxCount = 6;
 
                     shuffleLists();
                     resetClear();
 
-                    drawBoxes();
-                    drawBoxText();
+                    startGame();
                 });
             }
         } else {
