@@ -1,3 +1,3 @@
-- Add support for multiple levels
-- Fix problem with things not being removed on reset
-- Text and boxes not being removed on removeChild
+show red & green boxes for outline and line when checked
+add sound
+add like next level notification boxes & win page w/ score

@@ -52,7 +52,7 @@ let json = {
         {
             word: "apple1",
             definition: "like a tree potato1"
-        },
+        }/*,
         {
             word: "grape1",
             definition: "lil ting that grows on a vine1"
@@ -68,7 +68,7 @@ let json = {
         {
             word: "target1",
             definition: "used for playing the game called darts bloop bleep blah glah glewe1"
-        }
+        }*/
     ]
 };
 
@@ -246,9 +246,12 @@ let boxCount = 6; // 6 fits perfectly so this will be the actual maximum
 let vocabList = [];
 let definitionsList = [];
 
-let level = 1;
+let level = 0;
 
 function shuffleLists() {
+    vocabList = [];
+    definitionsList = [];
+
     for (let i = 1 * (level * boxCount); i < 1 * ((level + 1) * boxCount); i++) {
         vocabList.push(json.vocabulary[i].word);
         definitionsList.push(json.vocabulary[i].definition);
@@ -327,6 +330,35 @@ function checkAnswers() {
             console.log("Correct!");
             checkBoxText.text = "Correct!";
             createjs.Tween.get(checkBoxText).to({text: "Correct!", font: "24px Comic Sans MS"}, 1000);
+
+            // Check if the box count is >= than 6 for the next level, if it is,
+            // load next level
+            if (json.vocabulary.length - (1 * ((level) * boxCount) + 6) >= 6) {
+                //load next level
+                level++;
+
+                shuffleLists();
+                resetClear();
+
+                drawBoxes();
+                drawBoxText();
+            } else if (json.vocabulary.length - (1 * (level * boxCount) + 6) < 6 &&
+                json.vocabulary.length - (1 * (level * boxCount) + 6) > 0) {
+                // change box count to less value of vocab questions
+                // load next level
+                level++;
+                boxCount = json.vocabulary.length - (1 * (level * boxCount) + 6);
+
+                shuffleLists();
+                resetClear();
+
+                drawBoxes();
+                drawBoxText();
+
+            } else if (json.vocabulary.length - (1 * (level * boxCount) + 6) == 0) {
+                console.log("No more levels, winner winner chicken dinner")
+                //show win page
+            }
         } else {
             console.log("Try Again!");
             checkBoxText.text = "Try Again!";
@@ -340,17 +372,29 @@ function checkAnswers() {
     }
 }
 
+/**
+ * Clear the boxes, lines and text
+ *
+ */
+
 function resetClear() {
-    for (let line in vocabDefinitionLines) {
-        stage.removeChild(line);
+    for (let i = 0; i < vocabDefinitionLines.length; i++) {
+        stage.removeChild(vocabDefinitionLines[i]);
+    }
+
+    for (let i = 0; i < definitionBoxes.length; i++) {
+        stage.removeChild(definitionBoxes[i]);
+    }
+    for (let i = 0; i < vocabBoxes.length; i++) {
+        stage.removeChild(vocabBoxes[i]);
     }
 
     for (let i = 0; i < vocabBoxText.length; i++) {
-        console.log(stage.children);
+        stage.removeChild(vocabBoxText[i]);
     }
 
-    for (let definitionBox in definitionBoxes) {
-        //stage.removeChild(definitionBox);
+    for (let i = 0; i < definitionBoxText.length; i++) {
+        stage.removeChild(definitionBoxText[i]);
     }
 
     matchedBoxes = {matched: []};
