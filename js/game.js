@@ -252,9 +252,16 @@ function shuffleLists() {
     vocabList = [];
     definitionsList = [];
 
-    for (let i = 1 * (level * boxCount); i < 1 * ((level + 1) * boxCount); i++) {
-        vocabList.push(json.vocabulary[i].word);
-        definitionsList.push(json.vocabulary[i].definition);
+    if (boxCount < 6) {
+        for (let i = 1 * (level * 6); i < 1 * ((level + 1) * boxCount); i++) {
+            vocabList.push(json.vocabulary[i].word);
+            definitionsList.push(json.vocabulary[i].definition);
+        }
+    } else {
+        for (let i = 1 * (level * boxCount); i < 1 * ((level + 1) * boxCount); i++) {
+            vocabList.push(json.vocabulary[i].word);
+            definitionsList.push(json.vocabulary[i].definition);
+        }
     }
 
     vocabList = shuffle(vocabList);
@@ -346,8 +353,9 @@ function checkAnswers() {
                 json.vocabulary.length - (1 * (level * boxCount) + 6) > 0) {
                 // change box count to less value of vocab questions
                 // load next level
-                level++;
                 boxCount = json.vocabulary.length - (1 * (level * boxCount) + 6);
+                level++;
+                console.log(boxCount);
 
                 shuffleLists();
                 resetClear();
