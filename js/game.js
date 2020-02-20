@@ -180,6 +180,22 @@ function setupManifest() {
         {
             src: "img/win.png",
             id: "win"
+        },
+        {
+            src: "sound/click.mp3",
+            id: "clickSound"
+        },
+        {
+            src: "sound/win.mp3",
+            id: "winSound"
+        },
+        {
+            src: "sound/incorrect.mp3",
+            id: "incorrectSound"
+        },
+        {
+            src: "sound/correct.mp3",
+            id: "correctSound"
         }
     ];
 }
@@ -199,6 +215,9 @@ function handleFileLoad(event) {
     if (event.item.id.startsWith("unmute")) {
         unmute = new createjs.Bitmap(event.result);
     }
+    if (event.item.id.startsWith("win")) {
+        winScreen = new createjs.Bitmap(event.result);
+    }
 }
 
 function loadError(evt) {
@@ -213,6 +232,8 @@ function loadComplete(event) {
 
     createjs.Ticker.setFPS(FPS);
     createjs.Ticker.addEventListener("tick", update); // call update function
+
+    muted = false;
 
     stage.addChild(background);
     stage.addChild(startScreen);
@@ -335,6 +356,8 @@ function checkAnswers() {
             checkBoxText.text = "Correct!";
             createjs.Tween.get(checkBoxText).to({text: "Correct!", font: "24px Comic Sans MS"}, 1000);
 
+            playSound("correctSound");
+
             // Check if the box count is >= than 6 for the next level, if it is,
             // load next level
             if (json.vocabulary.length - (1 * ((level) * boxCount) + 6) >= 6) {
@@ -361,13 +384,28 @@ function checkAnswers() {
                 drawBoxText();
 
             } else if (json.vocabulary.length - (1 * (level * boxCount) + 6) == 0) {
-                console.log("No more levels, winner winner chicken dinner")
-                //show win page
+                console.log("No more levels, winner winner chicken dinner");
+                playSound("winSound");
+                stage.addChild(winScreen);
+                winScreen.on("click", function (event) {
+                    stage.removeChild(winScreen);
+
+                    level = 0;
+                    boxCount = 6;
+
+                    shuffleLists();
+                    resetClear();
+
+                    drawBoxes();
+                    drawBoxText();
+                });
             }
         } else {
             console.log("Try Again!");
             checkBoxText.text = "Try Again!";
             createjs.Tween.get(checkBoxText).to({text: "Check!", font: "24px Comic Sans MS"}, 1000);
+
+            playSound("incorrectSound");
 
             resetClear();
 
@@ -655,6 +693,8 @@ function clickVocabBox(event) {
             if (typeof clickedVocabBox !== "undefined" && typeof clickedDefinitionBox !== "undefined") {
                 matchBoxes(clickedVocabBox, clickedDefinitionBox);
             }
+
+            playSound("clickSound");
         }
     }
 }
@@ -711,6 +751,8 @@ function clickDefinitionBox(event) {
             if (typeof clickedVocabBox !== "undefined" && typeof clickedDefinitionBox !== "undefined") {
                 matchBoxes(clickedVocabBox, clickedDefinitionBox);
             }
+
+            playSound("clickSound");
         }
     }
 }
