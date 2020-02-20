@@ -12,7 +12,7 @@ let stage = new createjs.Stage("gameCanvas"); // canvas id is gameCanvas
 
 // bitmap letiables
 let background;
-let startScreen, endScreen;
+let startScreen, winScreen;
 
 //mute
 let muted;
@@ -176,6 +176,10 @@ function setupManifest() {
         {
             src: "img/mute.png",
             id: "unmute"
+        },
+        {
+            src: "img/win.png",
+            id: "win"
         }
     ];
 }
