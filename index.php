@@ -4,7 +4,7 @@
 <?php
 $version = $_GET['version'];
 
-if(!isset($version)){
+if (empty($version)) {
     die("Invalid version.");
 }
 

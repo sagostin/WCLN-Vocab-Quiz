@@ -1,6 +1,6 @@
 /**
  * WCLN.ca
- * Hockey Matchup
+ * Vocab Matchup
  * @author Shaun Agostinho (shaunagostinho@gmail.com)
  * Febuary 2020 (Whoops, this shouldn't have taken so long, darn college is so busy.)
  */
@@ -144,6 +144,14 @@ function setupManifest() {
         {
             src: "sound/correct.mp3",
             id: "correctSound"
+        },
+        {
+            src: "img/faillevel.png",
+            id: "failLevel"
+        },
+        {
+            src: "img/passlevel.png",
+            id: "passLevel"
         }
     ];
 }
@@ -165,6 +173,13 @@ function handleFileLoad(event) {
     }
     if (event.item.id.startsWith("winScreen")) {
         winScreen = new createjs.Bitmap(event.result);
+    }
+
+    if (event.item.id.startsWith("passLevel")) {
+        passLevel = new createjs.Bitmap(event.result);
+    }
+    if (event.item.id.startsWith("failLevel")) {
+        failLevel = new createjs.Bitmap(event.result);
     }
 }
 
@@ -190,6 +205,13 @@ function loadComplete(event) {
         stage.removeChild(startScreen);
         initMuteUnMute();
     });
+
+    passLevel.on("click", function (event) {
+        stage.removeChild(passLevel)
+    });
+    failLevel.on("click", function (event) {
+        stage.removeChild(failLevel)
+    });
 }
 
 function startGame() {
@@ -201,6 +223,7 @@ function startGame() {
     shuffleLists();
     drawBoxes();
     drawCheckBox();
+    drawResetBox();
 
 }
 
@@ -260,7 +283,7 @@ let checkBoxText;
 function drawCheckBox() {
     checkBox = new createjs.Shape();
     checkBox.graphics.beginFill("#FFF").drawRoundRectComplex(
-        sideGap + length, STAGE_HEIGHT - height - 5, STAGE_WIDTH - (sideGap * 2 + length * 2), height,
+        length - sideGap * 4, STAGE_HEIGHT - height - 5, STAGE_WIDTH - (sideGap * 2 + length * 2), height,
         10, 10, 10, 10);
 
     stage.addChild(checkBox);
@@ -276,6 +299,35 @@ function drawCheckBox() {
     checkBoxText.y = checkBox.graphics.command.y + height / 2 + checkBoxText.getMeasuredHeight() / 4;
 
     stage.addChild(checkBoxText);
+}
+
+let resetBox;
+let resetBoxText;
+
+function drawResetBox() {
+    resetBox = new createjs.Shape();
+    resetBox.graphics.beginFill("#FFF").drawRoundRectComplex(
+        STAGE_WIDTH - length - sideGap * 4, STAGE_HEIGHT - height - 5, STAGE_WIDTH - (sideGap * 2 + length * 2), height,
+        10, 10, 10, 10);
+
+    stage.addChild(resetBox);
+
+    resetBox.on("click", function (event) {
+        resetClear();
+
+        drawBoxes();
+        drawBoxText();
+
+        playSound("clickSound");
+    });
+
+    resetBoxText = new createjs.Text("Reset", "24px Comic Sans MS", "#000");
+    resetBoxText.textBaseline = "alphabetic";
+    resetBoxText.textAlign = 'center';
+    resetBoxText.x = resetBox.graphics.command.x + (STAGE_WIDTH - (sideGap * 2 + length * 2)) / 2;
+    resetBoxText.y = resetBox.graphics.command.y + height / 2 + checkBoxText.getMeasuredHeight() / 4;
+
+    stage.addChild(resetBoxText);
 }
 
 function checkAnswers() {
@@ -318,6 +370,8 @@ function checkAnswers() {
 
                 drawBoxes();
                 drawBoxText();
+
+                stage.addChild(passLevel);
             } else if (json.vocabulary.length - (1 * (level * boxCount) + 6) < 6 &&
                 json.vocabulary.length - (1 * (level * boxCount) + 6) > 0) {
                 // change box count to less value of vocab questions
@@ -331,6 +385,8 @@ function checkAnswers() {
 
                 drawBoxes();
                 drawBoxText();
+
+                stage.addChild(passLevel);
 
             } else if (json.vocabulary.length - (1 * (level * boxCount) + 6) == 0) {
                 console.log("No more levels, winner winner chicken dinner");
@@ -359,6 +415,8 @@ function checkAnswers() {
 
             drawBoxes();
             drawBoxText();
+
+            stage.addChild(failLevel);
         }
     }
 }
@@ -449,7 +507,7 @@ function drawBoxText() {
     for (let i = 0; i < boxCount; i++) {
         let textSize = 24;
         let fakeTextForSizing = new createjs.Text(vocabList[i], textSize + "px Comic Sans MS", "#FFFFFF");
-        while (fakeTextForSizing.getMeasuredWidth() >= length - sideGap * 2) {
+        while (fakeTextForSizing.getMeasuredWidth() >= length - sideGap) {
             textSize -= 1;
             fakeTextForSizing = new createjs.Text(vocabList[i], textSize + "px Comic Sans MS", "#FFFFFF");
         }
@@ -480,7 +538,7 @@ function drawBoxText() {
         let fakeTextForSizing = new createjs.Text(
             newDefinitionText != "" ? newDefinitionText :
                 definitionsList[i], textSize + "px Comic Sans MS", "#FFFFFF");
-        while (fakeTextForSizing.getMeasuredWidth() >= length + sideGap * 6.5) {
+        while (fakeTextForSizing.getMeasuredWidth() >= length + sideGap * 8.5) {
             textSize -= 1;
             fakeTextForSizing = new createjs.Text(
                 newDefinitionText != "" ? newDefinitionText :
