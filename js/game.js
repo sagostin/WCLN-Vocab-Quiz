@@ -14,6 +14,8 @@ let stage = new createjs.Stage("gameCanvas"); // canvas id is gameCanvas
 let background;
 let startScreen, winScreen;
 
+let backgroundImage = 'img/background_800x600.png';
+
 let passLevel, failLevel;
 
 //mute
@@ -109,7 +111,7 @@ function update(event) {
 function setupManifest() {
     manifest = [
         {
-            src: "img/bg.png",
+            src: backgroundImage,
             id: "background"
         },
         {

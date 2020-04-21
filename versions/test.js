@@ -2,52 +2,60 @@
 let json = {
     vocabulary: [
         {
-            word: "potato",
-            definition: "ground thing like apple but ground"
+            word: "word1",
+            definition: "def1"
         },
         {
-            word: "apple",
-            definition: "like a tree potato"
+            word: "word2",
+            definition: "def2"
         },
         {
-            word: "grape",
-            definition: "lil ting that grows on a vine"
+            word: "word3",
+            definition: "def3"
         },
         {
-            word: "minecraft",
-            definition: "lego but virtual"
+            word: "word4",
+            definition: "def4"
         },
         {
-            word: "cisco",
-            definition: "large company that makes the internet run"
+            word: "word5",
+            definition: "def5"
         },
         {
-            word: "target",
-            definition: "used for playing the game called darts bloop bleep blah glah glewe"
+            word: "word6",
+            definition: "def6"
         },
         {
-            word: "potato1",
-            definition: "ground thing like apple but ground1"
+            word: "word7",
+            definition: "def7"
         },
         {
-            word: "apple1",
-            definition: "like a tree potato1"
+            word: "word8",
+            definition: "def8"
         },
         {
-            word: "grape1",
-            definition: "lil ting that grows on a vine1"
-        }/*,
-        {
-            word: "minecraft1",
-            definition: "lego but virtual1"
+            word: "word9",
+            definition: "def9"
         },
         {
-            word: "cisco1",
-            definition: "large company that makes the internet run1"
+            word: "word10",
+            definition: "def10"
         },
         {
-            word: "target1",
-            definition: "used for playing the game called darts bloop bleep blah glah glewe1"
-        }*/
+            word: "word11",
+            definition: "def11"
+        },
+        {
+            word: "word12",
+            definition: "def12"
+        },
+        {
+            word: "word13",
+            definition: "def13"
+        },
+        {
+            word: "word14",
+            definition: "def14"
+        },
     ]
 };
