@@ -251,10 +251,12 @@ function shuffleLists() {
     vocabList = [];
     definitionsList = [];
 
+    console.log("")
+
     for (let i = 1 * (level * 6); i < (boxCount != 6 ? 1 * (level * 6) + (boxCount) : 1 * ((level + 1) * boxCount)); i++) {
-            vocabList.push(json.vocabulary[i].word);
-            definitionsList.push(json.vocabulary[i].definition);
-        }
+        vocabList.push(json.vocabulary[i].word);
+        definitionsList.push(json.vocabulary[i].definition);
+    }
 
     vocabList = shuffle(vocabList);
     definitionsList = shuffle(definitionsList);
@@ -318,7 +320,6 @@ function drawResetBox() {
         resetClear();
 
         drawBoxes();
-        drawBoxText();
 
         playSound("clickSound");
     });
@@ -353,7 +354,6 @@ function checkAnswers() {
             }
         }
 
-        console.log(correct);
         if (correct == boxCount) {
             console.log("Correct!");
             checkBoxText.text = "Correct!";
@@ -363,7 +363,7 @@ function checkAnswers() {
 
             // Check if the box count is >= than 6 for the next level, if it is,
             // load next level
-            if (json.vocabulary.length - (1 * ((level) * boxCount) + 6) >= 6) {
+            if (json.vocabulary.length - (1 * ((level) * 6) + 6) >= 6) {
                 //load next level
                 level++;
 
@@ -371,26 +371,29 @@ function checkAnswers() {
                 resetClear();
 
                 drawBoxes();
-                drawBoxText();
+
+                console.log("next level, more than 6");
 
                 stage.addChild(passLevel);
-            } else if (json.vocabulary.length - (1 * (level * boxCount) + 6) < 6 &&
-                json.vocabulary.length - (1 * (level * boxCount) + 6) > 0) {
+            } else if (json.vocabulary.length - (1 * (level * 6) + 6) < 6 &&
+                json.vocabulary.length - (1 * (level * 6) + 6) > 0) {
                 // change box count to less value of vocab questions
                 // load next level
-                boxCount = json.vocabulary.length - (1 * (level * boxCount) + 6);
+                boxCount = json.vocabulary.length - (1 * (level * 6) + 6);
                 level++;
+
                 console.log(boxCount);
 
                 shuffleLists();
                 resetClear();
 
                 drawBoxes();
-                drawBoxText();
+
+                console.log("next level, less than 6");
 
                 stage.addChild(passLevel);
 
-            } else if (json.vocabulary.length - (1 * (level * boxCount) + 6) == 0) {
+            } else if (json.vocabulary.length - (1 * (level * 6) + 6) <= 0) {
                 console.log("No more levels, winner winner chicken dinner");
                 stage.addChild(winScreen);
                 playSound("winSound");
@@ -406,6 +409,8 @@ function checkAnswers() {
                     startGame();
                 });
             }
+
+            checkBoxText.text = "Check!";
         } else {
             console.log("Try Again!");
             checkBoxText.text = "Try Again!";
@@ -433,19 +438,21 @@ function resetClear() {
         stage.removeChild(vocabDefinitionLines[i]);
     }
 
+
     for (let i = 0; i < definitionBoxes.length; i++) {
         stage.removeChild(definitionBoxes[i]);
     }
+
+    for (let i = 0; i < definitionBoxText.length; i++) {
+        stage.removeChild(definitionBoxText[i]);
+    }
+
     for (let i = 0; i < vocabBoxes.length; i++) {
         stage.removeChild(vocabBoxes[i]);
     }
 
     for (let i = 0; i < vocabBoxText.length; i++) {
         stage.removeChild(vocabBoxText[i]);
-    }
-
-    for (let i = 0; i < definitionBoxText.length; i++) {
-        stage.removeChild(definitionBoxText[i]);
     }
 
     matchedBoxes = {matched: []};
