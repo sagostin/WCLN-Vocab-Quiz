@@ -514,18 +514,7 @@ function drawBoxText() {
 
     //vocab boxes
     for (let i = 0; i < boxCount; i++) {
-        let textSize = 24;
-        let fakeTextForSizing = new createjs.Text(vocabList[i], textSize + "px Comic Sans MS", "#FFFFFF");
-        while (fakeTextForSizing.getMeasuredWidth() >= length - sideGap) {
-            textSize -= 1;
-            fakeTextForSizing = new createjs.Text(vocabList[i], textSize + "px Comic Sans MS", "#FFFFFF");
-        }
-
-        vocabBoxText[i] = new createjs.Text(vocabList[i], textSize + "px Comic Sans MS", "#000");
-        vocabBoxText[i].textBaseline = "alphabetic";
-        vocabBoxText[i].textAlign = 'center';
-        vocabBoxText[i].x = vocabBoxes[i].graphics.command.x + length / 2;
-        vocabBoxText[i].y = vocabBoxes[i].graphics.command.y + height / 2 + vocabBoxText[i].getMeasuredHeight() / 4;
+        vocabBoxText[i] = textMaker(vocabList[i], 20, vocabBoxes[i], true);
 
         stage.addChild(vocabBoxText[i]);
     }
@@ -533,38 +522,23 @@ function drawBoxText() {
     //definition boxes
     for (let i = 0; i < boxCount; i++) {
 
-        let newDefinitionText = "";
-        let splitLength = definitionsList[i].split(" ").length;
-        for (let def = 0; def < splitLength; def++) {
-            if (def !== parseInt(definitionsList[i].split(" ").length / 2)) {
-                newDefinitionText += definitionsList[i].split(" ")[def] + " ";
-            } else {
-                newDefinitionText += definitionsList[i].split(" ")[def] + "\n";
-            }
-        }
-
-        let textSize = 22;
-        let fakeTextForSizing = new createjs.Text(
-            newDefinitionText != "" ? newDefinitionText :
-                definitionsList[i], textSize + "px Comic Sans MS", "#FFFFFF");
-        while (fakeTextForSizing.getMeasuredWidth() >= length + sideGap * 8.5) {
-            textSize -= 1;
-            fakeTextForSizing = new createjs.Text(
-                newDefinitionText != "" ? newDefinitionText :
-                    definitionsList[i], textSize + "px Comic Sans MS", "#FFFFFF");
-        }
-
-        definitionBoxText[i] = new createjs.Text(
-            newDefinitionText != "" ? newDefinitionText :
-                definitionsList[i], textSize + "px Comic Sans MS", "#000");
-        definitionBoxText[i].textBaseline = "alphabetic";
-        definitionBoxText[i].textAlign = 'center';
-        definitionBoxText[i].x = definitionBoxes[i].graphics.command.x + length / 2;
-        definitionBoxText[i].y = definitionBoxes[i].graphics.command.y + height / 2
-            + (newDefinitionText != "" ? -definitionBoxText[i].getMeasuredHeight() / 8 : definitionBoxText[i].getMeasuredHeight() / 4);
-
+        definitionBoxText[i] = textMaker(definitionsList[i], 16, definitionBoxes[i], false);
         stage.addChild(definitionBoxText[i]);
     }
+}
+
+function textMaker(text, size, box, vocab) {
+    let boxText = new createjs.Text(text, size + "px Comic Sans MS", "#000");
+    boxText.textBaseline = "alphabetic";
+    boxText.textAlign = 'center';
+    var w = (boxText.getMeasuredWidth()) * boxText.scaleX;
+    var h = (boxText.getMeasuredHeight()) * boxText.scaleY;
+    boxText.regY = h / 2;
+    boxText.lineWidth = length - 10;
+    boxText.x = box.graphics.command.x + length / 2;
+    boxText.y = box.graphics.command.y + height / 2 + (vocab ? boxText.getMeasuredHeight() / 4 : (-4));
+
+    return boxText;
 }
 
 let matchedBoxes = {
