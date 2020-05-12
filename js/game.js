@@ -522,9 +522,26 @@ function drawBoxText() {
     //definition boxes
     for (let i = 0; i < boxCount; i++) {
 
-        definitionBoxText[i] = textMaker(definitionsList[i], 16, definitionBoxes[i], false);
+        definitionBoxText[i] = textSizer(definitionsList[i], 16, definitionBoxes[i], false);
         stage.addChild(definitionBoxText[i]);
     }
+}
+
+function textSizer(text, size, box, vocab) {
+    let sized = false;
+    let sizer = size;
+
+    while (!sized) {
+        let boxText = textMaker(text, sizer, box, vocab);
+        if (boxText.getMeasuredHeight() > height) {
+            sizer--;
+        } else {
+            sized = true;
+        }
+    }
+
+    return textMaker(text, sizer, box, vocab);
+
 }
 
 function textMaker(text, size, box, vocab) {
