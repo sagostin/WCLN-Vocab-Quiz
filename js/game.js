@@ -241,6 +241,7 @@ let sideGap = 20;
 let height = 55;
 let verticalGap = 20;
 let boxCount = 6; // 6 fits perfectly so this will be the actual maximum
+let vocabDefDifference = 60;
 
 let vocabList = [];
 let definitionsList = [];
@@ -476,7 +477,7 @@ function drawBoxes() {
         vocabBoxes[i].graphics.beginStroke("#FFF");
 
         vocabBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
-            sideGap, 100 + (verticalGap * i) + (i * height), length, height,
+            sideGap, 100 + (verticalGap * i) + (i * height), length - vocabDefDifference, height,
             10, 10, 10, 10);
 
         stage.addChild(vocabBoxes[i]);
@@ -494,8 +495,8 @@ function drawBoxes() {
         definitionBoxes[i].graphics.beginStroke("#FFF");
 
         definitionBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
-            STAGE_WIDTH - (length + sideGap),
-            100 + (verticalGap * i) + (i * height), length, height,
+            STAGE_WIDTH - (length + sideGap) - vocabDefDifference,
+            100 + (verticalGap * i) + (i * height), length + vocabDefDifference, height,
             10, 10, 10, 10);
         stage.addChild(definitionBoxes[i]);
 
@@ -551,8 +552,8 @@ function textMaker(text, size, box, vocab) {
     var w = (boxText.getMeasuredWidth()) * boxText.scaleX;
     var h = (boxText.getMeasuredHeight()) * boxText.scaleY;
     boxText.regY = h / 2;
-    boxText.lineWidth = length - 10;
-    boxText.x = box.graphics.command.x + length / 2;
+    boxText.lineWidth = (length + (vocab ? 0 - vocabDefDifference : 0 + vocabDefDifference)) - 10;
+    boxText.x = box.graphics.command.x + (length + (vocab ? 0 - vocabDefDifference : 0 + vocabDefDifference)) / 2;
     boxText.y = box.graphics.command.y + height / 2 + (vocab ? boxText.getMeasuredHeight() / 4 : (-4));
 
     return boxText;
@@ -620,15 +621,15 @@ function matchBoxes(vocab, definition) {
         vocabBoxes[vocab].graphics.beginStroke(matchColorsSettings[(matchedBoxes.matched.length - 1)]);
 
         vocabBoxes[vocab].graphics.beginFill("#FFF").drawRoundRectComplex(
-            sideGap, 100 + (verticalGap * vocab) + (vocab * height), length, height,
+            sideGap, 100 + (verticalGap * vocab) + (vocab * height), length - vocabDefDifference, height,
             10, 10, 10, 10);
 
         definitionBoxes[definition].graphics.setStrokeStyle(4);
         definitionBoxes[definition].graphics.beginStroke(matchColorsSettings[(matchedBoxes.matched.length - 1)]);
 
         definitionBoxes[definition].graphics.beginFill("#FFF").drawRoundRectComplex(
-            STAGE_WIDTH - (length + sideGap),
-            100 + (verticalGap * definition) + (definition * height), length, height,
+            STAGE_WIDTH - (length + sideGap) - vocabDefDifference,
+            100 + (verticalGap * definition) + (definition * height), length + vocabDefDifference, height,
             10, 10, 10, 10);
 
         vocabDefinitionMatchLine(vocab, definition);
@@ -654,8 +655,8 @@ function vocabDefinitionMatchLine(vocab, definition) {
     let shape = new createjs.Shape();
     let line = stage.addChild(shape);
     line.graphics.beginStroke(matchColorsSettings[(matchedBoxes.matched.length - 1)])
-        .setStrokeStyle(4).moveTo(vpoint.x + length, vpoint.y + (height / 2));
-    let cmd = line.graphics.lineTo(vpoint.x + length, vpoint.y + (height / 2)).command;
+        .setStrokeStyle(4).moveTo(vpoint.x + length - vocabDefDifference, vpoint.y + (height / 2));
+    let cmd = line.graphics.lineTo(vpoint.x + length - vocabDefDifference, vpoint.y + (height / 2)).command;
 
     createjs.Tween.get(cmd, {loop: false}).to({x: dpoint.x, y: dpoint.y + (height / 2)}, 750);
 
@@ -683,7 +684,7 @@ function clickVocabBox(event) {
                 vocabBoxes[i].graphics.beginStroke("#000");
 
                 vocabBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
-                    sideGap, 100 + (verticalGap * i) + (i * height), length, height,
+                    sideGap, 100 + (verticalGap * i) + (i * height), length - vocabDefDifference, height,
                     10, 10, 10, 10);
             }
 
@@ -716,7 +717,7 @@ function unClickVocabBox(i) {
     vocabBoxes[i].graphics.beginStroke("#FFF");
 
     vocabBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
-        sideGap, 100 + (verticalGap * i) + (i * height), length, height,
+        sideGap, 100 + (verticalGap * i) + (i * height), length - vocabDefDifference, height,
         10, 10, 10, 10);
 }
 
@@ -740,8 +741,8 @@ function clickDefinitionBox(event) {
                 definitionBoxes[i].graphics.beginStroke("#000");
 
                 definitionBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
-                    STAGE_WIDTH - (length + sideGap),
-                    100 + (verticalGap * i) + (i * height), length, height,
+                    STAGE_WIDTH - (length + sideGap) - vocabDefDifference,
+                    100 + (verticalGap * i) + (i * height), length + vocabDefDifference, height,
                     10, 10, 10, 10);
             }
 
@@ -774,8 +775,8 @@ function unClickDefinitionBox(i) {
     definitionBoxes[i].graphics.beginStroke("#FFF");
 
     definitionBoxes[i].graphics.beginFill("#FFF").drawRoundRectComplex(
-        STAGE_WIDTH - (length + sideGap),
-        100 + (verticalGap * i) + (i * height), length, height,
+        STAGE_WIDTH - (length + sideGap) - vocabDefDifference,
+        100 + (verticalGap * i) + (i * height), length + vocabDefDifference, height,
         10, 10, 10, 10);
 }
 
