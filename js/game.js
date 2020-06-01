@@ -216,17 +216,53 @@ function loadComplete(event) {
     });
 }
 
+let initialBoxCount;
+let boxCount; // 6 fits perfectly so this will be the actual maximum
+
 function startGame() {
     gameStarted = true;
 
     /** Below this is actual game code. **/
 
-    boxCount = 6;
+    // make dynamic
+    initialBoxCount = calculateBoxCount();
+    boxCount = initialBoxCount;
+
+
     shuffleLists();
     drawBoxes();
     drawCheckBox();
     drawResetBox();
 
+}
+
+function calculateBoxCount() {
+    // if(json.vocabulary.length % 6 == 0){
+    //     return 4
+    // }else{
+    //     let count = 6
+    //     while(json.vocabulary.length % count >= 3){
+    //         count--;
+    //     }
+    //
+    //     return count;
+    // }
+
+    if (json.vocabulary.length % 6 == 0) {
+        return 6;
+    } else {
+        //console.log(json.vocabulary.length % 6)
+        let count = 6;
+        while (count >= 1) {
+            count--;
+
+            if (json.vocabulary.length % count >= 3) {
+                console.log(json.vocabulary.length % count + " test");
+                return count;
+            }
+        }
+        return 6;
+    }
 }
 
 /** START GAME CODE **/
@@ -240,7 +276,7 @@ let length = 300;
 let sideGap = 20;
 let height = 55;
 let verticalGap = 20;
-let boxCount = 6; // 6 fits perfectly so this will be the actual maximum
+// todo calculate box count so there's not like only 2 on one page
 let vocabDefDifference = 60;
 
 let vocabList = [];
@@ -254,7 +290,7 @@ function shuffleLists() {
 
     console.log("")
 
-    for (let i = 1 * (level * 6); i < (boxCount != 6 ? 1 * (level * 6) + (boxCount) : 1 * ((level + 1) * boxCount)); i++) {
+    for (let i = 1 * (level * initialBoxCount); i < (boxCount != initialBoxCount ? 1 * (level * initialBoxCount) + (boxCount) : 1 * ((level + 1) * boxCount)); i++) {
         vocabList.push(json.vocabulary[i].word);
         definitionsList.push(json.vocabulary[i].definition);
     }
@@ -364,8 +400,9 @@ function checkAnswers() {
 
             // Check if the box count is >= than 6 for the next level, if it is,
             // load next level
-            if (json.vocabulary.length - (1 * ((level) * 6) + 6) >= 6) {
+            if (json.vocabulary.length - (1 * ((level) * initialBoxCount) + initialBoxCount) >= initialBoxCount) {
                 //load next level
+                console.log(json.vocabulary.length - (1 * ((level) * initialBoxCount) + initialBoxCount));
                 level++;
 
                 shuffleLists();
@@ -376,14 +413,15 @@ function checkAnswers() {
                 console.log("next level, more than 6");
 
                 stage.addChild(passLevel);
-            } else if (json.vocabulary.length - (1 * (level * 6) + 6) < 6 &&
-                json.vocabulary.length - (1 * (level * 6) + 6) > 0) {
+            } else if (json.vocabulary.length - (1 * (level * initialBoxCount) + initialBoxCount) < initialBoxCount &&
+                json.vocabulary.length - (1 * (level * initialBoxCount) + initialBoxCount) > 0) {
+                console.log("More levelz");
                 // change box count to less value of vocab questions
                 // load next level
-                boxCount = json.vocabulary.length - (1 * (level * 6) + 6);
+                boxCount = json.vocabulary.length - (1 * (level * initialBoxCount) + initialBoxCount);
                 level++;
 
-                console.log(boxCount);
+                console.log(initialBoxCount);
 
                 shuffleLists();
                 resetClear();
@@ -394,7 +432,7 @@ function checkAnswers() {
 
                 stage.addChild(passLevel);
 
-            } else if (json.vocabulary.length - (1 * (level * 6) + 6) <= 0) {
+            } else if (json.vocabulary.length - (1 * (level * initialBoxCount) + initialBoxCount) <= 0) {
                 console.log("No more levels, winner winner chicken dinner");
                 stage.addChild(winScreen);
                 playSound("winSound");
@@ -402,7 +440,7 @@ function checkAnswers() {
                     stage.removeChild(winScreen);
 
                     level = 0;
-                    //boxCount = 6;
+                    boxCount = initialBoxCount;
 
                     shuffleLists();
                     resetClear();
