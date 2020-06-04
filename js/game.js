@@ -22,6 +22,8 @@ let passLevel, failLevel;
 let muted;
 let mute, unmute;
 
+let paused = false;
+
 /*
  * Called by body onload
  */
@@ -209,9 +211,13 @@ function loadComplete(event) {
     });
 
     passLevel.on("click", function (event) {
+        paused = false;
+        checkBoxText.text = "Check!";
         stage.removeChild(passLevel)
     });
     failLevel.on("click", function (event) {
+        paused = false;
+        checkBoxText.text = "Check!";
         stage.removeChild(failLevel)
     });
 }
@@ -334,7 +340,10 @@ function drawCheckBox() {
     stage.addChild(checkBox);
 
     checkBox.on("click", function (event) {
-        checkAnswers();
+        if (!paused) {
+            paused = false;
+            checkAnswers();
+        }
     });
 
     checkBoxText = new createjs.Text("Check", "24px Comic Sans MS", "#000");
@@ -358,11 +367,12 @@ function drawResetBox() {
     stage.addChild(resetBox);
 
     resetBox.on("click", function (event) {
-        resetClear();
-
-        drawBoxes();
-
-        playSound("clickSound");
+        if (!paused) {
+            resetClear();
+            drawBoxes();
+            playSound("clickSound");
+            paused = false;
+        }
     });
 
     resetBoxText = new createjs.Text("Reset", "24px Comic Sans MS", "#000");
@@ -440,11 +450,14 @@ function checkAnswers() {
                 console.log("No more levels, winner winner chicken dinner");
                 stage.addChild(winScreen);
                 playSound("winSound");
+
                 winScreen.on("click", function (event) {
                     stage.removeChild(winScreen);
 
                     level = 0;
                     boxCount = initialBoxCount;
+
+                    paused = false;
 
                     shuffleLists();
                     resetClear();
@@ -452,8 +465,7 @@ function checkAnswers() {
                     startGame();
                 });
             }
-
-            checkBoxText.text = "Check!";
+            paused = true;
         } else {
             console.log("Try Again!");
             checkBoxText.text = "Try Again!";
@@ -467,6 +479,7 @@ function checkAnswers() {
             drawBoxText();
 
             stage.addChild(failLevel);
+            paused = true;
         }
     }
 }
