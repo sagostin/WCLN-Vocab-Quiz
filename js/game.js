@@ -257,8 +257,8 @@ function calculateBoxCount() {
             count--;
 
             if (json.vocabulary.length % count >= 3) {
-                console.log(json.vocabulary.length % count + " test");
-                return count;
+                console.log(json.vocabulary.length % count + " - Calculate Boxes");
+                return count - 1;
             }
         }
         return 6;
@@ -288,9 +288,11 @@ function shuffleLists() {
     vocabList = [];
     definitionsList = [];
 
-    console.log("")
+    let max = (initialBoxCount <= 6) ? initialBoxCount :
+        (boxCount != initialBoxCount ? 1 * (level * initialBoxCount) + (boxCount) : 1 * ((level + 1) * initialBoxCount));
 
-    for (let i = 1 * (level * initialBoxCount); i < (boxCount != initialBoxCount ? 1 * (level * initialBoxCount) + (boxCount) : 1 * ((level + 1) * boxCount)); i++) {
+    for (let i = 1 * (level * initialBoxCount); i < max; i++) {
+        console.log(i);
         vocabList.push(json.vocabulary[i].word);
         definitionsList.push(json.vocabulary[i].definition);
     }
