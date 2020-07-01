@@ -30,10 +30,16 @@ echo "<script src='versions/$version.js'></script>";
 ?>
 <script src="js/game.js"></script>
 <?php
-if (file_exists('versions/'.$version.'_background_800x600.png')) {
-    echo "<script>backgroundImage = 'versions/".$version."_background_800x600.png';</script>";
-}else{
-    echo "<script>console.log('No background found for version \"".$version."\".');</script>";
+
+$unitVersion = explode('-', $version);
+array_pop($unitVersion);
+
+if (file_exists('versions/' . $version . '_background_800x600.png')) {
+    echo "<script>backgroundImage = 'versions/" . $version . "_background_800x600.png';</script>";
+} else if (file_exists('versions/' . implode('-', $unitVersion) . '_background_800x600.png')) {
+    echo "<script>backgroundImage = 'versions/" . implode('-', $unitVersion) . "_background_800x600.png';</script>";
+} else {
+    echo "<script>console.log('No background found for version \"" . $version . "\".');</script>";
 }
 ?>
 
